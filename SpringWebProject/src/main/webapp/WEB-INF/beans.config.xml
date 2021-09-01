@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+   
+    
+		
+	 <context:annotation-config/> 
+	<context:component-scan base-package="tw.da"/>
+	
+	<aop:aspectj-autoproxy/>
+	<!-- 
+	<bean id="logAdvice" class="tw.da.util.LogAdvice"/>
+	<aop:config>
+	   <aop:aspect id="logAspect" ref="logAdvice">
+	       <aop:pointcut id="pointcut1" expression="execution(* tw.da.model.HouseService.select*(..))" />
+	       <aop:before pointcut-ref="pointcut1" method="logBefore"/>
+	       <aop:around pointcut-ref="pointcut1" method="logAround"/>
+	       <aop:after-returning pointcut-ref="pointcut1" method="logAfter" returning="result"/>
+	       <aop:after-throwing pointcut-ref="pointcut1" method="logThrow" throwing="e"/>
+	   </aop:aspect>
+	</aop:config>
+	 -->
+	
+	
+	<bean id="datasource" class="org.springframework.jndi.JndiObjectFactoryBean">
+	<property name="jndiName" value="java:comp/env/jdbc/DA"></property>
+	</bean>
+
+  <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean" destroy-method="destroy">
+	   <property name="dataSource" ref="datasource"/>
+	   <property name="packagesToScan" value="tw.da"/>
+	   <property name="hibernateProperties">
+	      <props>
+	         <prop key="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</prop>
+	         <prop key="hibernate.show_sql">true</prop>
+	         <prop key="hibernate.format_sql">true</prop>
+	         <prop key="hibernate.current_session_context_class">thread</prop>
+	         <prop key="hibernate.allow_update_outside_transaction">true</prop>
+	      </props>
+	   </property>
+	</bean>
+
+	<bean id="LoginDAO" class="tw.da.model.LoginDAO"/>
+
+	<bean id="LoginService1" class="tw.da.model.LoginService">
+	<constructor-arg ref="LoginDAO"/>
+	</bean>
+
+	<bean id="LoginService2" class="tw.da.model.LoginService">
+    <property name="logindao" ref="LoginDAO"/>
+	</bean>
+	
+	
+
+</beans>
